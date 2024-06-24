@@ -1,14 +1,3 @@
-variable "project" {
-  description = "The ID of the project in which to create the alert policy."
-  type        = string
-}
-
-variable "region" {
-  description = "The region in which to create the alert policy."
-  type        = string
-  default     = "us-central1"
-}
-
 variable "display_name" {
   description = "The display name of the alert policy."
   type        = string
