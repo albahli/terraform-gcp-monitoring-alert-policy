@@ -37,31 +37,38 @@ variable "condition_duration" {
 variable "condition_threshold_value" {
   description = "The value against which to compare the time series."
   type        = number
+  default     = 0
 }
 
 variable "aggregation_alignment_period" {
   description = "The alignment period for aggregations."
   type        = string
+  default     = null
 }
 
 variable "aggregation_per_series_aligner" {
   description = "The per-series aligner for aggregations."
   type        = string
+  default     = null
+
 }
 
 variable "aggregation_cross_series_reducer" {
   description = "The cross-series reducer for aggregations."
   type        = string
+  default     = null
 }
 
 variable "aggregation_group_by_fields" {
   description = "The fields to group by for aggregations."
   type        = list(string)
+  default     = []
 }
 
 variable "notification_channels" {
   description = "The notification channels to use for the alert policy."
   type        = list(string)
+  default     = []
 }
 
 variable "combiner" {
@@ -73,16 +80,6 @@ variable "enabled" {
   description = "Whether the alert policy is enabled."
   type        = bool
   default     = true
-}
-
-variable "documentation_content" {
-  description = "The documentation content for the alert policy."
-  type        = string
-}
-
-variable "documentation_mime_type" {
-  description = "The mime type of the documentation content."
-  type        = string
 }
 
 variable "user_labels" {
