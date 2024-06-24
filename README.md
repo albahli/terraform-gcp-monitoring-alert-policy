@@ -28,7 +28,3 @@ module "monitoring_alert_policy" {
     env = "production"
   }
 }
-
-
-
-
