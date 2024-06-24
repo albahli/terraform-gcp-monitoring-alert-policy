@@ -27,11 +27,13 @@ variable "condition_filter" {
 variable "condition_comparison" {
   description = "The comparison to apply between the time series and the threshold."
   type        = string
+  default     = "COMPARISON_GT"
 }
 
 variable "condition_duration" {
   description = "The duration for which the time series must violate the threshold to be considered a match."
   type        = string
+  default     = "60s"
 }
 
 variable "condition_threshold_value" {
@@ -74,6 +76,7 @@ variable "notification_channels" {
 variable "combiner" {
   description = "How to combine the results of multiple conditions."
   type        = string
+  default     = "OR"
 }
 
 variable "enabled" {
