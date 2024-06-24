@@ -1,0 +1,92 @@
+variable "project" {
+  description = "The ID of the project in which to create the alert policy."
+  type        = string
+}
+
+variable "region" {
+  description = "The region in which to create the alert policy."
+  type        = string
+  default     = "us-central1"
+}
+
+variable "display_name" {
+  description = "The display name of the alert policy."
+  type        = string
+}
+
+variable "condition_display_name" {
+  description = "The display name of the condition."
+  type        = string
+}
+
+variable "condition_filter" {
+  description = "A filter that identifies which time series should be compared with the threshold."
+  type        = string
+}
+
+variable "condition_comparison" {
+  description = "The comparison to apply between the time series and the threshold."
+  type        = string
+}
+
+variable "condition_duration" {
+  description = "The duration for which the time series must violate the threshold to be considered a match."
+  type        = string
+}
+
+variable "condition_threshold_value" {
+  description = "The value against which to compare the time series."
+  type        = number
+}
+
+variable "aggregation_alignment_period" {
+  description = "The alignment period for aggregations."
+  type        = string
+}
+
+variable "aggregation_per_series_aligner" {
+  description = "The per-series aligner for aggregations."
+  type        = string
+}
+
+variable "aggregation_cross_series_reducer" {
+  description = "The cross-series reducer for aggregations."
+  type        = string
+}
+
+variable "aggregation_group_by_fields" {
+  description = "The fields to group by for aggregations."
+  type        = list(string)
+}
+
+variable "notification_channels" {
+  description = "The notification channels to use for the alert policy."
+  type        = list(string)
+}
+
+variable "combiner" {
+  description = "How to combine the results of multiple conditions."
+  type        = string
+}
+
+variable "enabled" {
+  description = "Whether the alert policy is enabled."
+  type        = bool
+  default     = true
+}
+
+variable "documentation_content" {
+  description = "The documentation content for the alert policy."
+  type        = string
+}
+
+variable "documentation_mime_type" {
+  description = "The mime type of the documentation content."
+  type        = string
+}
+
+variable "user_labels" {
+  description = "User-supplied key/value labels for the alert policy."
+  type        = map(string)
+  default     = {}
+}
