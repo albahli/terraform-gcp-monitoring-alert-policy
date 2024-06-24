@@ -32,16 +32,3 @@ module "monitoring_alert_policy" {
 
 
 
-To use your new Terraform module, create a Terraform configuration file in a different directory and reference your module.
-
-```hcl
-provider "google" {
-  credentials = file("path/to/your/credentials.json")
-  project     = "your-project-id"
-  region      = "us-central1"
-}
-
-module "monitoring_alert_policy" {
-  source = "path/to/terraform-google-monitoring-alert-policy"
-
-  project                     =
