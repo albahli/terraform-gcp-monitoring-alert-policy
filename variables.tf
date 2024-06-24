@@ -1,3 +1,8 @@
+variable "project" {
+  description = "The ID of the project in which to create the alert policy."
+  type        = string
+}
+
 variable "display_name" {
   description = "The display name of the alert policy."
   type        = string

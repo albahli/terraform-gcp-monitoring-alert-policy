@@ -1,6 +1,6 @@
 resource "google_monitoring_alert_policy" "alert_policy" {
   display_name = var.display_name
-
+  project      = var.project
   conditions {
     display_name = var.condition_display_name
     condition_threshold {
