@@ -24,5 +24,5 @@ resource "google_monitoring_alert_policy" "alert_policy" {
   notification_channels = var.notification_channels
   combiner              = var.combiner
   enabled               = var.enabled
-  user_labels = var.user_labels
+  user_labels           = var.user_labels
 }
