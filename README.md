@@ -4,9 +4,9 @@ This module creates a Google Cloud Monitoring Alert Policy.
 
 ## Usage
 
-```hcl
+```
 module "monitoring_alert_policy" {
-  source = "path/to/terraform-google-monitoring-alert-policy"
+  source = "github.com/Albahli/terraform-gcp-monitoring-alert-policy"
 
   project                     = "your-project-id"
   display_name                = "My Alert Policy"
@@ -28,3 +28,4 @@ module "monitoring_alert_policy" {
     env = "production"
   }
 }
+```
