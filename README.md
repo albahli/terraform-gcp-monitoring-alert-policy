@@ -22,8 +22,6 @@ module "monitoring_alert_policy" {
   notification_channels       = ["projects/your-project-id/notificationChannels/1234567890"]
   combiner                    = "OR"
   enabled                     = true
-  documentation_content       = "Alert documentation"
-  documentation_mime_type     = "text/markdown"
   user_labels                 = {
     env = "production"
   }
