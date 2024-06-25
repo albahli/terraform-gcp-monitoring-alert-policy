@@ -1,3 +1,8 @@
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
 resource "google_monitoring_alert_policy" "alert_policy" {
   display_name = var.display_name
   project      = var.project
