@@ -8,7 +8,7 @@ This module creates a Google Cloud Monitoring Alert Policy.
 module "monitoring_alert_policy" {
   source                           = "albahli/monitoring-alert-policy/gcp"
 # version                          = "0.0.9" Optional to use specifc release
-  region                           = var.region
+  region                           = "me-central2"
   project                          = local.devops_projects["devops"].project_id
   display_name                     = "My Alert Policy"
   condition_display_name           = "CPU utiliaztion over 0.8 for a minute"
