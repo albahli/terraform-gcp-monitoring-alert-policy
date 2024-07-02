@@ -7,48 +7,91 @@ Note that not all attributes in the official resource are supported yet.
 
 ## Usage
 
+1. Defining the module in `main.tf` file:
 ``` hcl
 module "monitoring_alert_policy" {
   source                           = "albahli/monitoring-alert-policy/gcp"
 # version                          = "0.0.9" Optional to use specifc release
-  region                           = "me-central2"
-  project                          = local.devops_projects["devops"].project_id
-  display_name                     = "My Alert Policy"
-  condition_display_name           = "CPU utiliaztion over 0.8 for a minute"
-  condition_filter                 = "metric.type=\"compute.googleapis.com/instance/cpu/utilization\" AND resource.type=\"gce_instance\""
-  condition_comparison             = "COMPARISON_GT"
-  condition_duration               = "60s"
-  condition_threshold_value        = 0.8
-  aggregation_alignment_period     = "60s"
-  aggregation_per_series_aligner   = "ALIGN_MEAN"
-  aggregation_cross_series_reducer = "REDUCE_MEAN"
-  aggregation_group_by_fields      = ["resource.zone"]
-  notification_channels            = ["projects/your-project-id/notificationChannels/1234567890"]
-  combiner                         = "OR"
-  enabled                          = true
-  user_labels = {
-    env = "production"
+  for_each                            = local.monitoring_alert_policies
+  project                             = "Your-Project-ID"
+  display_name                        = each.key
+  combiner                            = lookup(each.value, "combiner", "OR")
+  condition_threshold                 = lookup(each.value, "condition_threshold", null)
+  condition_absent                    = lookup(each.value, "condition_absent", null)
+  condition_monitoring_query_language = lookup(each.value, "condition_monitoring_query_language", null)
+  condition_matched_log               = lookup(each.value, "condition_matched_log", null)
+  condition_prometheus_query_language = lookup(each.value, "condition_prometheus_query_language", null)
+  alert_settings = {
+    enabled               = lookup(each.value, "enabled", true)
+    notification_channels = lookup(each.value, "notification_channels", [])
+    severity              = lookup(each.value, "severity", "WARNING")
+    user_labels           = lookup(each.value, "user_labels", null)
+    alert_strategy        = lookup(each.value, "alert_strategy", null)
+    documentation = {
+      content   = lookup(each.value, "description", "")
+      mime_type = "text/markdown"
+      subject   = each.key
+    }
   }
 }
 ```
 
+2. Use it in the `alerts-policies.tf` as below:
+```hcl
+locals {
+  monitoring_alert_policies = {
+    ca_certificates_7_days_expiry = {
+      description           = "The CA certificate expires in 7 days and should be renewed or retired."
+      severity              = "CRITICAL"
+      condition_threshold   = local.threshold_conditions.ca_certificates_7_days_expiry
+      notification_channels = [data.google_monitoring_notification_channel.pagerduty.name]
+    },
+    ca_certificates_30_days_expiry = {
+      description           = "The CA certificate expires in 30 days and should be renewed or retired."
+      severity              = "WARNING"
+      condition_threshold   = local.threshold_conditions.ca_certificates_30_days_expiry
+      notification_channels = [data.google_monitoring_notification_channel.pagerduty.name]
+    }
+  }
+}
+
+locals {
+  threshold_conditions = {
+    ca_certificates_7_days_expiry = {
+      filter          = "metric.type=\"privateca.googleapis.com/ca/cert_expiration\" AND resource.type=\"privateca.googleapis.com/CertificateAuthority\""
+      comparison      = "COMPARISON_LT" # '<' 
+      threshold_value = 604800          # 7 Days
+      duration        = "0s"
+      trigger         = { count = 1 }
+    },
+    ca_certificates_30_days_expiry = {
+      filter          = "metric.type=\"privateca.googleapis.com/ca/cert_expiration\" AND resource.type=\"privateca.googleapis.com/CertificateAuthority\""
+      comparison      = "COMPARISON_LT" # '<' 
+      threshold_value = 2592000         # 30 Days
+      duration        = "0s"
+      trigger         = { count = 1 }
+    },
+  }
+  absent_conditions                    = {}
+  monitoring_query_language_conditions = {}
+  matched_log_conditions               = {}
+  prometheus_query_language_conditions = {}
+}
+```
+
+Note that module variables are fixed, but can be filled/customized based on how you define your `locals` variables.
+
 ## Inputs
-| Name                               |	Description                                                                                                                                                                                                                                 | Type         |	Default        |	Required |
-| ---------------------------------- |:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:| ------------:| ---------------:| ----------|
-| project                            | The ID of the project in which to create the alert policy.                       	                                                                                                                                                          | string       | n/a	           | yes       |
-| region	                           | The region in which to create the alert policy.	                                                                                                                                                                                            | string       | "us-central1"   | no        |
-| display_name	                     |  The display name of the alert policy.	                                                                                                                                                                                                      | string       | n/a	           | yes       |
-| condition_display_name	           |  The display name of the condition.	                                                                                                                                                                                                        | string       | n/a	           | yes       |
-| condition_filter	                 |  A filter that identifies which time series should be compared with the threshold.	                                                                                                                                                          | string       | n/a	           | yes       |
-| condition_comparison	             |  The comparison to apply between the time series and the threshold.	                                                                                                                                                                        | string       | n/a             | yes       |
-| condition_duration	               |  The duration for which the time series must violate the threshold to be considered a match.                                                                                                                                                 |	string       | n/a	           | yes       |
-| condition_threshold_value	         |  The value against which to compare the time series.                                                                                                                                                                                         |	number       | n/a	           | yes       |
-| aggregation_alignment_period	     |  The alignment period for aggregations.                                                                                                                                                                                                      | string       | n/a             | yes       |
-| aggregation_per_series_aligner	   |  The per-series aligner for aggregations.                                                                                                                                                                                                    | string       | n/a             | yes       |
-| aggregation_cross_series_reducer	 |  The cross-series reducer for aggregations.                                                                                                                                                                                                  |	string       | n/a             | yes       |
-| aggregation_group_by_fields	       |  The fields to group by for aggregations.	                                                                                                                                                                                                  | list(string) | n/a	           | yes       |
-| notification_channels	             |  The notification channels to use for the alert policy.                                                                                                                                                                                      |	list(string) | n/a	           | yes       |
-| combiner	                         |  How to combine the results of multiple conditions.                                                                                                                                                                                          | string       | n/a             | yes       |
-| enabled	                           |  Whether the alert policy is enabled.	                                                                                                                                                                                                      | bool	       | true            | no        |
-| user_labels	                       |  User-supplied key/value labels for the alert policy.	                                                                                                                                                                                      | map(string)	 | {}              | no        |
-| severity	                         |  The severity of an alert policy indicates how important incidents generated by that policy are. The severity level will be displayed on the Incident detail page and in notifications. Possible values are: `CRITICAL`, `ERROR`, `WARNING`. | string	     | n/a             | no        |
+This is a [Reference](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/monitoring_alert_policy#argument-reference) for all below inputs and it's sub inputs as well.
+
+| Name                                |	Description                                                                                                                                                                                                                                  | Type         |	Default        |	Required |
+| ------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:| ------------:| --------------:| ----------|
+| project                             | The ID of the project in which to create the alert policy.                       	                                                                                                                                                           | string       | n/a	           | yes       |
+| display_name	                      | The display name of the alert policy.	                                                                                                                                                                                                       | string       | n/a	           | yes       |
+| combiner	                          | How to combine the results of multiple conditions.                                                                                                                                                                                           | string       | n/a            | yes       |
+| condition_threshold     	          | A condition that compares a time series against a threshold.                                                                                                                                                                                 | object       | n/a            | no        |                                                                                                    
+| condition_absent            	      | A condition that checks that a time series continues to receive new data points.                                                                                                                                                             | object       | n/a            | no        |                                                                                                                                                 
+| condition_monitoring_query_language | A Monitoring Query Language query that outputs a boolean stream.                                                                                                                                                                             | object       |                | no        |                                                                    
+| condition_matched_log           	  | A condition that checks for log messages matching given constraints. If set, no other conditions can be present.                                                                                                                             | object       | n/a            | no        |
+| condition_prometheus_query_language | A condition type that allows alert policies to be defined using Prometheus Query Language (PromQL). The PrometheusQueryLanguageCondition message contains information from a Prometheus alerting rule and its associated rule group.         | object       | n/a	           | no        |
+| alert_settings       	              | An object that contains those official inputs `enabled`, `notification_channels`, `severity`, `user_labels`, `alert_strategy`, and `documentation`.                                                                                          | object       | n/a	           | no        |
