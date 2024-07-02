@@ -28,7 +28,7 @@ resource "google_monitoring_alert_policy" "alert_policy" {
           }
         }
       }
-    }
+    } 
 
     dynamic "condition_monitoring_query_language" {
       for_each = var.condition_monitoring_query_language != null ? [var.condition_monitoring_query_language] : []
