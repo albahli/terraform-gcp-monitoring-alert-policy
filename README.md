@@ -2,9 +2,6 @@
 
 This module creates a Google Cloud Monitoring Alert Policy based on the official resource https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/monitoring_alert_policy
 
-Note that not all attributes in the official resource are supported yet.
-
-
 ## Usage
 
 1. Defining the module in `main.tf` file:
@@ -80,7 +77,6 @@ locals {
 ```
 
 Note that module variables are fixed, but can be filled/customized based on how you define your `locals` variables.
-
 ## Inputs
 This is a [Reference](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/monitoring_alert_policy#argument-reference) for all below inputs and it's sub inputs as well.
 
