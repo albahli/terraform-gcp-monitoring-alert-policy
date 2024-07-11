@@ -7,8 +7,8 @@ This module creates a Google Cloud Monitoring Alert Policy based on the official
 1. Defining the module in `main.tf` file:
 ``` hcl
 module "monitoring_alert_policy" {
-  source                           = "albahli/monitoring-alert-policy/gcp"
-# version                          = "0.0.9" Optional to use specifc release
+  source                           = "albahli/monitoring-alert-policy/google"
+# version                          = "0.0.25" Optional to use specifc release
   for_each                            = local.monitoring_alert_policies
   project                             = "Your-Project-ID"
   display_name                        = each.key
